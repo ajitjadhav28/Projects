@@ -3,7 +3,7 @@
 
 // 'C' source line config statements
 
-#include <p18F46K22.h>
+#include <p18f46k22.h>
 
 // CONFIG1H
 #pragma config FOSC = INTIO67   // Oscillator Selection bits (Internal oscillator block)

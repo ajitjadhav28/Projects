@@ -5,7 +5,7 @@
  * Created on 16 March, 2016, 12:49 PM
  */
 
-#include <p18F46K22.h>
+#include <p18f46k22.h>
 #include <delays.h>
 #include "adc.h"
 
