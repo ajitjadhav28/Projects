@@ -5,6 +5,35 @@
  * Compiler:  MPLAB C18
  */
 
+/* 
+ |--------------------------------------|
+ | Peripheral -	Function    -	PIC Pin |
+ |--------------------------------------|
+ | Ultrasonic -	Trig        -	RA4		|
+ |			  - ECHO        - 	RB0		|
+ |--------------------------------------|
+ | PIR 		  - OUT         -	AN1		|
+ |--------------------------------------|
+ | LDR 		  - OUT   		-	AN0     |
+ |--------------------------------------|
+ | LED*		  - INPUT       - DACOUT	|
+ |--------------------------------------|
+ | LCD 		  - RS 			-	RE0		|
+ |			  - RW			-   RE1		|
+ |			  - E 			-   RE2 	|
+ | 			  - D4			-	RD0		| 	
+ |			  - D5			-	RD1		|
+ |			  - D6			-	RD2		|
+ |			  - D7 			-	RD3		|
+ |--------------------------------------|
+ | Indicator  - INPUT 		-   RB5     |
+ | LED 									|
+ |--------------------------------------|
+
+	*LED (Power LED) is interfaced to PIC using mosfet. 
+		DACOUT pin is connected to mosfet gate.  
+*/
+
 #include <p18f46k22.h>
 #include <delays.h>
 #include <stdio.h>
@@ -17,21 +46,29 @@
 #define US_ECHO_DIR TRISBbits.TRISB0
 #define US_ECHO PORTBbits.RB0
 
+// LED Pin
 #define LED_DIR TRISBbits.TRISB5 
 #define LED LATBbits.LATB5
 
-
+// LCD Line Buffers
 char line1[16];
 char line2[16];
+
 unsigned int t;
+
+// Results
 unsigned int regL,regH,resADC,resPIR,resUS,resLDR,tmr_2 = 0;
+
+// Timer
 int sec=0,mn=0,hr=0;
+
+// Flags
 short f1,f2,f3;
 
 void lcdinit();
 void lcdstring(unsigned char *);
 
-
+// Timer 2 Interrupt
 #pragma interrupt chk_isr
 void chk_isr(void)
 {
@@ -56,12 +93,14 @@ void My_Prio_Int(void)
 }
 #pragma code
 
+// Millisecond Delay for 16MHz Crystal
 void msDelay(unsigned int i)
 {
     for(; i>0; i--)
         Delay1KTCYx(4);
 }
 
+// Microsecond Delay
 void usDelay(unsigned int i)
 {
     for(; i>0; i--)
@@ -73,6 +112,7 @@ void usDelay(unsigned int i)
     }
 }
 
+// ADC Initialization with Channel
 void initADC(unsigned char ch)
 {
     ADCON0 = 0x00;
@@ -82,6 +122,7 @@ void initADC(unsigned char ch)
   ADCON0bits.ADON = 1;
 }
 
+// ADC Conversion 
 void readADC(void)
 {
   ADCON0bits.GO_DONE = 1;
@@ -91,6 +132,8 @@ void readADC(void)
   resADC = ((int) (regH<<8)|regL);
 }
 
+// Initializing Ultrasonic with Timer 0 16bit mode and 
+// Weak-Pullup resistor enabled on RB0
 void initUltrasonic(void)
 {
     T0CON = 0x01;
@@ -100,12 +143,13 @@ void initUltrasonic(void)
     WPUBbits.WPUB0 = 1;
 }
 
+// Reading distance from US module in cm. using timer0
 void readUltrasonic(void)
 {
     TMR0H = 0;
     TMR0L = 0;
     US_TRIG = 1;
-    Delay10TCYx(4);
+    Delay10TCYx(4);    // 10 uSec Delay for Trig pulse
     US_TRIG = 0;
     while(!US_ECHO);
     T0CONbits.TMR0ON = 1;
@@ -117,6 +161,7 @@ void readUltrasonic(void)
     resUS = (int) (((resUS*0.000001)*34000)/2);
 }
 
+// Reading PIR status using ADC on channel AN1
 void readPIR(void)
 {
     initADC(1);
@@ -128,6 +173,7 @@ void readPIR(void)
         resPIR = 0;
 }
 
+// LED indicator 
 void eventL(void)
 {
     LED = 1;
@@ -140,6 +186,7 @@ void eventL(void)
     Delay10KTCYx(10);
 }
 
+// LED indication for PIR true 
 void pirIndicate(void)
 {
     LED = 1;
@@ -148,6 +195,7 @@ void pirIndicate(void)
     Delay10KTCYx(20);
 }
 
+// Reading LDR on ADC channel AN0
 void readLDR(void)
 {
     initADC(0);
@@ -155,6 +203,7 @@ void readLDR(void)
     resLDR = (int) resADC/100;
 }
 
+// Setting Brightness of LED on DACOUT pin using 5bit DAC
 void setBrightness(void)
 {
     readLDR();
@@ -174,6 +223,7 @@ void setBrightness(void)
         VREFCON2 = 17;
 }
 
+// Initial brightness control testing
 void initBrightness()
 {
     for(t=17;t<24;t++)
@@ -187,19 +237,21 @@ void initBrightness()
         msDelay(300);
     }
 }
+
+// Main routine
 void main(void) {
-    OSCCON = 0x76;
-    VREFCON1 = 0xE0;
-    T2CON = 0x7B;
-    INTCONbits.GIE = 1;
+    OSCCON = 0x76;          // Internal Oscillator 16MHz Enabled
+    VREFCON1 = 0xE0;		
+    T2CON = 0x7B;		
+    INTCONbits.GIE = 1;     // Global, peripheral & timer 2 interrupt enable 
     INTCONbits.PEIE = 1;
     PIE1bits.TMR2IE = 1;
-    PR2 = 0xff;
-    VREFCON2 = 0;
-    LED_DIR = 0;
+    PR2 = 0xff;				// period registor 2 with max value
+    VREFCON2 = 0;			// zero brightness
+    LED_DIR = 0;			// LED pin on output 
     LED = 1;
     msDelay(1000);
-    lcdinit();
+    lcdinit();				// Initialize LCD in 4bit mode, ultrasonic and brightness
     lcdcmd(0x01);
     initUltrasonic();
     initBrightness();
