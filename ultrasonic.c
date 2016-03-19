@@ -38,5 +38,5 @@ float readUltrasonic(void)
     if(r <= 400.0)
         return r;
     else 
-        return o;
+        return 0;
 }
