@@ -9,25 +9,25 @@
  |--------------------------------------|
  | Peripheral -	Function    -	PIC Pin |
  |--------------------------------------|
- | Ultrasonic -	Trig        -	RA4		|
- |			  - ECHO        - 	RB0		|
+ | Ultrasonic -	Trig        -	RA4	|
+ |	      - ECHO        -   RB0	|
  |--------------------------------------|
- | PIR 		  - OUT         -	AN1		|
+ | PIR 	      - OUT     -	AN1	|
  |--------------------------------------|
- | LDR 		  - OUT   		-	AN0     |
+ | LDR        - OUT     -	AN0     |
  |--------------------------------------|
- | LED*		  - INPUT       - DACOUT	|
+ | LED*	      - INPUT       - DACOUT	|
  |--------------------------------------|
- | LCD 		  - RS 			-	RE0		|
- |			  - RW			-   RE1		|
- |			  - E 			-   RE2 	|
- | 			  - D4			-	RD0		| 	
- |			  - D5			-	RD1		|
- |			  - D6			-	RD2		|
- |			  - D7 			-	RD3		|
+ | LCD 	      - RS 	    -	RE0	|
+ |	      - RW    	    -   RE1	|
+ |	      - E 	    -   RE2 	|
+ | 	      - D4	    -	RD0	| 	
+ |	      - D5	    -	RD1	|
+ |	      - D6	    -	RD2	|
+ |	      - D7 	    -	RD3	|
  |--------------------------------------|
- | Indicator  - INPUT 		-   RB5     |
- | LED 									|
+ | Indicator  - INPUT 	    -   RB5     |
+ | LED 					|
  |--------------------------------------|
 
 	*LED (Power LED) is interfaced to PIC using mosfet. 
