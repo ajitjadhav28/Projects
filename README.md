@@ -2,6 +2,7 @@
 ##### Study Table Project
 -------
 
+
 > **B**asic aim of smart study table concept is to provide good comfortable environment to students while studying. 
 Concept also consist a self assessment system by which student can measure certain parameters such as working time, 
 average reading speed per page etc.
@@ -31,4 +32,6 @@ average reading speed per page etc.
 5. **ST_Schematic.pdf** - _Schematic of main controller._
 6. **RT_Schematic.pdf** - _Schematic of reading table controller._
 7. **ST_Gerber.zip** - _Gerber file of main controller for PCB manufacturing._
-8. **RT_Gerber.zip** - _Gerber file of reading table controller for PCB manufacturing._
+8. **RT_Gerber.zip** - _Gerber file of reading table controller for PCB manufacturing._  
+
+###### _Note - All PCBs are designed in KiCAD and are single layer._
