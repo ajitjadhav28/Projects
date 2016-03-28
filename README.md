@@ -23,7 +23,7 @@ average reading speed per page etc.
 * Gate Controlled Mosfet with high bright LED
 * 5V power supply
 
->#### Repository files discription - 
+>#### Repository files description - 
 1. **main.c** - _Main program file of pic18._
 2. **config.h** - _configuration register definations of controller._
 3. **lcd.c** - _4bit mode LCD functions for JHD162 LCD._
