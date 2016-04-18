@@ -76,7 +76,7 @@ void chk_isr(void)
     {
         tmr_2++;
         PIR1bits.TMR2IF = 0;
-        if(tmr_2 >= 61)
+        if(tmr_2 >= 250)
         {
             sec++;
             tmr_2 = 0;
@@ -97,7 +97,7 @@ void My_Prio_Int(void)
 void msDelay(unsigned int i)
 {
     for(; i>0; i--)
-        Delay1KTCYx(4);
+        Delay1KTCYx(16);
 }
 
 // Microsecond Delay
@@ -109,14 +109,26 @@ void usDelay(unsigned int i)
         Nop();
         Nop();
         Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
+        Nop();
     }
 }
 
 // ADC Initialization with Channel
 void initADC(unsigned char ch)
 {
-    ADCON0 = 0x00;
-   if(ch < 28)
+  ADCON0 = 0x00;
+  if(ch < 28)
     ADCON0 |=  (ch << 2);
   ADCON2 = 0xAD;
   ADCON0bits.ADON = 1;
@@ -125,7 +137,9 @@ void initADC(unsigned char ch)
 // ADC Conversion 
 void readADC(void)
 {
+  msDelay(1);  
   ADCON0bits.GO_DONE = 1;
+  msDelay(1);
   while(ADCON0bits.GO_DONE);
   regL = ADRESL;
   regH = ADRESH;
@@ -149,7 +163,7 @@ void readUltrasonic(void)
     TMR0H = 0;
     TMR0L = 0;
     US_TRIG = 1;
-    Delay10TCYx(4);    // 10 uSec Delay for Trig pulse
+    Delay10TCYx(16);    // 10 uSec Delay for Trig pulse
     US_TRIG = 0;
     while(!US_ECHO);
     T0CONbits.TMR0ON = 1;
@@ -158,7 +172,7 @@ void readUltrasonic(void)
     regL = TMR0L;
     regH = TMR0H;
     resUS = (regH << 8) | regL;
-    resUS = (int) (((resUS*0.000001)*34000)/2);
+    resUS = (int) (((resUS*0.00000025)*34000)/2);
 }
 
 // Reading PIR status using ADC on channel AN1
@@ -229,18 +243,20 @@ void initBrightness()
     for(t=17;t<24;t++)
     {
         VREFCON2 = t;
-        msDelay(300);
+        msDelay(1200);
     }
     for(t=24;t>16;t--)
     {
         VREFCON2 = t;
-        msDelay(300);
+        msDelay(1200);
     }
 }
 
 // Main routine
 void main(void) {
-    OSCCON = 0x76;          // Internal Oscillator 16MHz Enabled
+    OSCCON = 0x7C;          // Internal Oscillator 16MHz Enabled
+    OSCTUNE = 0x5F;	    
+    OSCCON2bits.PLLRDY = 1;
     VREFCON1 = 0xE0;		
     T2CON = 0x7B;		
     INTCONbits.GIE = 1;     // Global, peripheral & timer 2 interrupt enable 
@@ -250,7 +266,6 @@ void main(void) {
     VREFCON2 = 0;			// zero brightness
     LED_DIR = 0;			// LED pin on output 
     LED = 1;
-    msDelay(1000);
     lcdinit();				// Initialize LCD in 4bit mode, ultrasonic and brightness
     lcdcmd(0x01);
     initUltrasonic();
