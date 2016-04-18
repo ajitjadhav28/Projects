@@ -22,11 +22,11 @@ void lcdcmd1(unsigned char command)
 	LATDbits.LATD3 = (command >> 3 ) & 0x1;	
 	E=0;
 	RS=0;
-	Delay10KTCYx(2);
+	Delay1KTCYx(2);
 	E=1;
-	Delay10KTCYx(2);
+	Delay1KTCYx(2);
 	E=0;
-	Delay10KTCYx(2);
+	Delay1KTCYx(2);
 }
 
 void lcdcmd(unsigned char value)
@@ -37,7 +37,7 @@ void lcdcmd(unsigned char value)
 	highernibble = (highernibble  >>4) & 0x0f ;	
 	lcdcmd1(highernibble);
 	lcdcmd1(lowernibble);
-	Delay10KTCYx(4);
+	Delay1KTCYx(2);
 }
 
 void lcddata1(unsigned char data)
@@ -47,13 +47,13 @@ void lcddata1(unsigned char data)
 	LATDbits.LATD2 = (data >> 2)  & 0x1;	
 	LATDbits.LATD3 = (data >> 3 ) & 0x1;	
 	RS=1;
-	Delay10KTCYx(2);
+	Delay1KTCYx(2);
 	E = 0;
-	Delay10KTCYx(2);
+	Delay1KTCYx(2);
 	E = 1;
-	Delay10KTCYx(2);
+	Delay1KTCYx(2);
 	E = 0;
-	Delay10KTCYx(2);
+	Delay1KTCYx(2);
 }
 
 void lcddata(unsigned char value)
@@ -65,7 +65,7 @@ void lcddata(unsigned char value)
 	highernibble = (highernibble  >>4) & 0x0f ;		
 	lcddata1(highernibble);
 	lcddata1(lowernibble);
-	Delay10KTCYx(4);
+	Delay1KTCYx(2);
 }
 
 void lcdstring(unsigned char *str)
@@ -96,15 +96,15 @@ void lcdinit()
 	PORTDbits.RD2 =  0;
 	PORTDbits.RD3 =  0;
     
-	Delay10KTCYx(20);
+	Delay10KTCYx(80);
 	lcdcmd(0x03);
-	Delay10KTCYx(8);
+	Delay10KTCYx(16);
 	lcdcmd(0x03);
-	Delay10KTCYx(8);
+	Delay10KTCYx(16);
 	lcdcmd(0x03);
-	Delay10KTCYx(8);
+	Delay10KTCYx(16);
 	lcdcmd(0x02);
-	Delay10KTCYx(8);
+	Delay10KTCYx(16);
 	lcdcmd(0x28);
 	lcdcmd(0x08);
 	lcdcmd(0x0c);
